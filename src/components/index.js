@@ -1,4 +1,5 @@
 import React from 'react';
+import LoginScreen from '../screens/auth/login';
 
 import {
     StyleSheet,
@@ -13,8 +14,6 @@ import {
 
 export default function index() {
   return (
-    <SafeAreaView>
-        <Text>Hello World Skyline</Text>
-    </SafeAreaView>
+    <LoginScreen/>
   )
 }
