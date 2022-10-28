@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginScreen from '../screens/auth/login';
+import LoginScreen from '../screens/auth/Login';
 
 import {
     StyleSheet,

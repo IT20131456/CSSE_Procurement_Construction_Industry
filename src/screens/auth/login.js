@@ -1,4 +1,6 @@
 import {React, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import axios from "axios";
 import Background from '../../components/auth/Background';
 import Logo from '../../components/auth/Logo';
 import TextInput from '../../components/auth/TextInput';
@@ -7,23 +9,65 @@ import SubmitButton from '../../components/auth/SubmitButton';
 
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
-export default function login() {
+export default function Login() {
+
+    const Navigation = useNavigation();
 
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
 
     const onLoginPressed = () => {
-        const emailError = emailValidator(email.value)
-        const passwordError = passwordValidator(password.value)
-        if (emailError || passwordError) {
-          setEmail({ ...email, error: emailError })
-          setPassword({ ...password, error: passwordError })
-          return
+        // const emailError = emailValidator(email.value)
+        // const passwordError = passwordValidator(password.value)
+        
+        // if (emailError || passwordError) {
+        //   setEmail({ ...email, error: emailError })
+        //   setPassword({ ...password, error: passwordError })
+        //   return
+        // }
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'Dashboard' }],
+        // })
+        
+        const data = {
+          userID: email.value,
+          nicNo: password.value
         }
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Dashboard' }],
+
+        //console.log(data);
+        
+        // fetch('http://192.168.56.1:5000/user/login', {
+        //   method: 'POST',
+        //   headers: {
+        //     Accept: 'application/json',
+        //     'Content-Type': 'application/json'
+        //   },
+        //   body: JSON.stringify({
+        //     userID: email.value,
+        //     nicNo: password.value
+        //   })
+        // }).then((res)=>{
+        //   alert(res);
+        // }).catch((error)=>{
+        //   alert(error);
+        // });
+
+        axios.post('http://192.168.56.1:5000/user/login', data)
+        .then(function (response) {
+          if(response.data.success){
+            alert("Login Success");
+            setTimeout(()=>{
+              Navigation.navigate('Home');
+            }, 2000)
+            
+          }
         })
+        .catch(function (error) {
+          alert("Login Fail");
+        });
+
+        
       }
 
   return (
@@ -33,7 +77,7 @@ export default function login() {
 
         <TextInput
         
-        label="Email"
+        label="User ID"
         returnKeyType="next"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: '' })}
@@ -46,7 +90,7 @@ export default function login() {
       />
 
     <TextInput
-        label="Password"
+        label="NIC No"
         returnKeyType="done"
         value={password.value}
         onChangeText={(text) => setPassword({ value: text, error: '' })}
