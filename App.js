@@ -1,23 +1,13 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button
-} from 'react-native';
+import {} from 'react-native';
 
 import Home from './src/components/index';
+import HomeScreen from './src/navigations/Navigation';
 
 const App = () => {
-
   return(
-    <Home />
+    <HomeScreen />
   )
 }
-
-const style = StyleSheet.create({
-  
-})
-
 
 export default App;
