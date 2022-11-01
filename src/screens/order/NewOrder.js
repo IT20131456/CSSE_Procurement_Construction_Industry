@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Background from '../../components/auth/Background';
 import TextInput from '../../components/auth/TextInput';
-
+import axios from 'axios';
 export const NewOrder = ({ navigation }) => {
 
     // todo: change this later to drop down with retrieved data from database
     const [itemName, setItemName] = React.useState({ value: '', error: '' });
-    const [quantity, setQuantity] = React.useState({ value: '', error: '' });
+    const [quantity, setQuantity] = React.useState({ value: 0.0, error: '' });
     const [size, setSize] = React.useState({ value: '', error: '' });
-    const [unitPrice, setUnitPrice] = React.useState({ value: '', error: '' });
+    const [unitPrice, setUnitPrice] = React.useState({ value: 0.0, error: '' });
     const [totalPrice, setTotalPrice] = React.useState({ value: '', error: '' });
 
     useState(() => {
@@ -22,34 +22,81 @@ export const NewOrder = ({ navigation }) => {
         let sizeError = true;
         let quantityError = true;
         let unitPriceError = true;
-        let totalPriceError = true;
+        //let totalPriceError = true;
 
-        if (itemName === '') {
+        if (itemName.value === '') {
             setItemName({ ...itemName, error: 'Item name cannot be empty' });
+            itemNameError = false;
         }
-        else if (quantity === '') {
+        else if (quantity.value === '') {
             setQuantity({ ...quantity, error: 'Quantity cannot be empty' });
+            quantityError = false;
         }
-        else if (unitPrice === '') {
+        else if (unitPrice.value === '') {
             setUnitPrice({ ...unitPrice, error: 'Cannot find the unit price' });
+            unitPriceError = false;
         }
-        else if (totalPrice === '') {
-            setTotalPrice({ ...totalPrice, error: 'Total cannot be calculated' });
-        }
-        else if (size === '') {
+        //else if (totalPrice === '') {
+        //    setTotalPrice({ ...totalPrice, error: 'Total cannot be calculated' });
+        //}
+        else if (size.value === '') {
             setSize({ ...size, error: 'Size cannot be empty' });
+            sizeError = false;
         }
         else {
             itemNameError = false;
+            quantityError = false;
+            unitPriceError = false;
+            sizeError = false;
         }
 
-        if (itemNameError || quantityError || unitPriceError || totalPriceError || sizeError) {
+        if (itemNameError || quantityError || unitPriceError || sizeError) {
             Alert.alert('Error', 'Please check the fields again', [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
         }
         else {
-            navigation.navigate('Home')
+            setTotalPrice({ value: (quantity.value * unitPrice.value).toString() });
+            console.log(itemName.value + " -> " + itemName.error + " -> " + itemNameError);
+            console.log(quantity.value + " -> " + quantity.error + " -> " + quantityError);
+            console.log(unitPrice.value + " -> " + unitPrice.error + " -> " + unitPriceError);
+            //console.log(totalPrice.value + " -> " + totalPrice.error);
+            console.log(size.value + " -> " + size.error + " -> " + sizeError);
+            const order = {
+                siteManagerID: "U0001",
+                siteManagerName: "Silva",
+                items: {
+                    name: itemName.value,
+                    size: quantity.value,
+                    quantity: size.value,
+                    unitPrice: unitPrice.value,
+                    orderStatus: "Pending",
+                    receivedAmount: 0,
+                    updatedDate: new Date().toString()
+                },
+                status: "Waiting for a supplier",
+                expectedBudget: totalPrice.value,
+                acceptedSupplier: "",
+                actualAmount: 0.0,
+                createdDate: new Date().toString(),
+            }
+
+            console.log(order);
+            axios.post('http://192.168.1.102:5000/tender/add', order)
+                .then((response) => {
+                    console.log(response);
+                    if (response.data.success) {
+                        alert("Successfully added the order");
+                        setTimeout(() => {
+                            navigation.navigate('Home');
+                        }, 2000)
+
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Creating record failed");
+                });
         }
     }
 
@@ -94,7 +141,7 @@ export const NewOrder = ({ navigation }) => {
                         keyboardType="numeric"
                     />
                     <TextInput
-                        label="Unit Price"      
+                        label="Unit Price"
                         returnKeyType="next"
                         value={unitPrice.value}
                         onChangeText={(number) => setUnitPrice({ value: number, error: '' })}
@@ -108,7 +155,7 @@ export const NewOrder = ({ navigation }) => {
 
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => onOrderPressed()}
+                        onPress={() => { onOrderPressed() }}
                     >
                         <Text style={styles.text}>Add Order</Text>
                     </TouchableOpacity>
