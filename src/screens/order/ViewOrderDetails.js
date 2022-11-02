@@ -1,3 +1,6 @@
+/**
+ * This compoenets used to display details about the order
+ */
 import {React, useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
@@ -16,10 +19,12 @@ import {
 export default function ViewOrderDetails() {
   const [order, setOrder] = useState([]);
   const [notReceived, setNotReceived] = useState(true);
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState('');
 
   useEffect(() => {
     var sampleID = '636139517cb2b5e5299ef7c3';
+
+    //Call GET methos to retice the order details
     axios
       .get(`http://192.168.56.1:5000/tender/get/636139517cb2b5e5299ef7c3`)
       .then(function (response) {
@@ -32,39 +37,40 @@ export default function ViewOrderDetails() {
       });
   }, []);
 
+  //If press recvied button that response send to the datbase
   const onPressReceived = () => {
-
     const data = {
-        orderID: order._id
-    }
+      orderID: order._id,
+    };
     axios
       .post(`http://192.168.56.1:5000/receivedOrder/add`, data)
       .then(function (response) {
         if (response.data.success) {
-          alert("Saved Sucessfull");
+          alert('Saved Sucessfull');
         }
       })
       .catch(function (error) {
         alert('Error');
       });
-  }
+  };
 
+  //Id press nor received buttton that reponse send to the database
   const onPressNotReceived = () => {
     const data = {
-        orderID: order._id,
-        reason: reason
-    }
+      orderID: order._id,
+      reason: reason,
+    };
     axios
       .post(`http://192.168.56.1:5000/receivedOrder/add`, data)
       .then(function (response) {
         if (response.data.success) {
-          alert("Saved Sucessfull");
+          alert('Saved Sucessfull');
         }
       })
       .catch(function (error) {
         alert('Error');
       });
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -88,21 +94,36 @@ export default function ViewOrderDetails() {
         </View>
       </View>
 
-      <Button style={styles.receivedBtn} onPress={onPressReceived} title="Recevied" color="#008080" />
+      <Button
+        style={styles.receivedBtn}
+        onPress={onPressReceived}
+        title="Recevied"
+        color="#008080"
+      />
 
       <Text></Text>
-      <Button style={styles.receivedBtn} onPress={()=>{setNotReceived(false)}} title="Not Recevied" color="#ff6347" />
+      <Button
+        style={styles.receivedBtn}
+        onPress={() => {
+          setNotReceived(false);
+        }}
+        title="Not Recevied"
+        color="#ff6347"
+      />
 
       <Text></Text>
 
-      {notReceived ? <View><Text>Hello</Text></View> : (
+      {notReceived ? (
+        <View></View>
+      ) : (
         <View>
-            <TextInput
-                label="Reason"
-                value={reason}
-                onChangeText={setReason}
-            />
-            <Button style={styles.receivedBtn} onPress={onPressNotReceived} title="Send" color="#008080" />
+          <TextInput label="Reason" value={reason} onChangeText={setReason} />
+          <Button
+            style={styles.receivedBtn}
+            onPress={onPressNotReceived}
+            title="Send"
+            color="#008080"
+          />
         </View>
       )}
     </View>
