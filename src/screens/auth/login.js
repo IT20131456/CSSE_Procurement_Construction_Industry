@@ -7,7 +7,7 @@ import TextInput from '../../components/auth/TextInput';
 import SubmitButton from '../../components/auth/SubmitButton';
 
 
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export default function Login() {
 
