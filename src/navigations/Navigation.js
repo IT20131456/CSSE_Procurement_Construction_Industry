@@ -22,6 +22,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
+
         <Stack.Screen
           options={{headerShown: false}}
           name="Home"
@@ -40,6 +41,7 @@ export default function Navigation() {
         <Stack.Screen name="NewOrder" component={NewOrder} />
         <Stack.Screen name="ViewOrders" component={ViewOrders} />
         <Stack.Screen name="ViewOrderDetails" component={ViewOrderDetails} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
