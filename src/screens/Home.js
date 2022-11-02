@@ -1,5 +1,5 @@
-import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 
 export default function Home() {
 
