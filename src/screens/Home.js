@@ -1,7 +1,10 @@
-import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 
 export default function Home({navigation}) {
+
+  const Navigation = useNavigation();
 
     const onPressLearnMore = () => {
 
@@ -13,7 +16,7 @@ export default function Home({navigation}) {
         <Text></Text>
         <Button
             onPress={() =>
-              navigation.navigate('New Purchase Order')
+              Navigation.navigate('NewOrder')
             }
             title="New Order"
             color="#f08e25"
@@ -21,7 +24,9 @@ export default function Home({navigation}) {
         />
         <Text></Text>
         <Button
-            onPress={onPressLearnMore}
+            onPress={() =>
+              Navigation.navigate('ViewOrders')
+            }
             title="View Order"
             color="#f08e25"
             accessibilityLabel="Learn more about this purple button"
