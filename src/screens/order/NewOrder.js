@@ -8,6 +8,7 @@ import Logo from '../../components/auth/Logo';
 export const NewOrder = ({ navigation }) => {
 
     // todo: change this later to drop down with retrieved data from database
+    const maxBudget = 100000;
     const [siteName, setSiteName] = React.useState({ value: '', error: '' });
     const [itemName, setItemName] = React.useState({ value: '', error: '' });
     const [quantity, setQuantity] = React.useState({ value: 0.0, error: '' });
@@ -56,7 +57,7 @@ export const NewOrder = ({ navigation }) => {
             quantityError = false;
             unitPriceError = false;
             sizeError = false;
-            siteNameError = false;	
+            siteNameError = false;
         }
 
         if (itemNameError || quantityError || unitPriceError || sizeError || siteNameError) {
@@ -66,11 +67,13 @@ export const NewOrder = ({ navigation }) => {
         }
         else {
             setTotalPrice({ value: (quantity.value * unitPrice.value).toString() });
-            console.log(itemName.value + " -> " + itemName.error + " -> " + itemNameError);
-            console.log(quantity.value + " -> " + quantity.error + " -> " + quantityError);
-            console.log(unitPrice.value + " -> " + unitPrice.error + " -> " + unitPriceError);
-            console.log(size.value + " -> " + size.error + " -> " + sizeError);
-            console.log(siteName.value + " -> " + siteName.error + " -> " + siteNameError);
+            let status = '';
+            if (totalPrice.value > maxBudget) {
+                status = 'Need approval';
+            }
+            else {
+                status = 'Waiting for a supplier';
+            }
             const order = {
                 site: siteName.value,
                 siteManagerID: "U0001",
@@ -80,18 +83,17 @@ export const NewOrder = ({ navigation }) => {
                     size: size.value,
                     quantity: quantity.value,
                     unitPrice: unitPrice.value,
-                    orderStatus: "Waiting for a supplier",
+                    orderStatus: "Pending",
                     receivedAmount: 0,
                     updatedDate: new Date().toString()
                 },
-                status: "Waiting for a supplier",
+                status: status,
                 expectedBudget: totalPrice.value,
                 acceptedSupplier: "",
                 actualAmount: 0.0,
                 createdDate: new Date().toString(),
             }
-
-            console.log(order);
+            //console.log(order);
             axios.post('http://192.168.1.102:5000/tender/add', order)
                 .then((response) => {
                     console.log(response);
