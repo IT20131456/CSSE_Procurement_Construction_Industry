@@ -14,7 +14,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
+        <Stack.Screen options={{ headerBackVisible: false, title: 'Dashboard' }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Splash" component={SplashScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen  name="NewOrder" component={NewOrder} />

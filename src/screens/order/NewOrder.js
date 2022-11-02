@@ -18,7 +18,7 @@ export const NewOrder = ({ navigation }) => {
 
     useEffect(() => {
         axios.get('http://192.168.1.102:5000/itemDetails/getall').then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             if (response.data.success) {
                 setStoredItemList(response.data.existingItemDetails);
             }
