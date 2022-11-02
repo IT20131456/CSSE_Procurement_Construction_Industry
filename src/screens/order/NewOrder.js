@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Background from '../../components/auth/Background';
 import TextInput from '../../components/auth/TextInput';
@@ -8,6 +8,7 @@ import Logo from '../../components/auth/Logo';
 export const NewOrder = ({ navigation }) => {
 
     // todo: change this later to drop down with retrieved data from database
+    const [siteName, setSiteName] = React.useState({ value: '', error: '' });
     const [itemName, setItemName] = React.useState({ value: '', error: '' });
     const [quantity, setQuantity] = React.useState({ value: 0.0, error: '' });
     const [size, setSize] = React.useState({ value: '', error: '' });
@@ -15,7 +16,7 @@ export const NewOrder = ({ navigation }) => {
     const [totalPrice, setTotalPrice] = React.useState({ value: '', error: '' });
     const [storedItemList, setStoredItemList] = React.useState([]);
 
-    useState(() => {
+    useEffect(() => {
         axios.get('http://192.168.1.102:5000/itemDetails/getall').then((response) => {
             console.log(response.data);
             if (response.data.success) {
@@ -25,6 +26,7 @@ export const NewOrder = ({ navigation }) => {
     }, []);
 
     const onOrderPressed = () => {
+        let siteNameError = true;
         let itemNameError = true;
         let sizeError = true;
         let quantityError = true;
@@ -33,31 +35,31 @@ export const NewOrder = ({ navigation }) => {
 
         if (itemName.value === '') {
             setItemName({ ...itemName, error: 'Item name cannot be empty' });
-            itemNameError = false;
         }
         else if (quantity.value === '') {
             setQuantity({ ...quantity, error: 'Quantity cannot be empty' });
-            quantityError = false;
         }
         else if (unitPrice.value === '') {
             setUnitPrice({ ...unitPrice, error: 'Cannot find the unit price' });
-            unitPriceError = false;
         }
         //else if (totalPrice === '') {
         //    setTotalPrice({ ...totalPrice, error: 'Total cannot be calculated' });
         //}
         else if (size.value === '') {
             setSize({ ...size, error: 'Size cannot be empty' });
-            sizeError = false;
+        }
+        else if (siteName.value === '') {
+            setSiteName({ ...siteName, error: 'Site name cannot be empty' });
         }
         else {
             itemNameError = false;
             quantityError = false;
             unitPriceError = false;
             sizeError = false;
+            siteNameError = false;	
         }
 
-        if (itemNameError || quantityError || unitPriceError || sizeError) {
+        if (itemNameError || quantityError || unitPriceError || sizeError || siteNameError) {
             Alert.alert('Error', 'Please check the fields again', [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
@@ -67,9 +69,10 @@ export const NewOrder = ({ navigation }) => {
             console.log(itemName.value + " -> " + itemName.error + " -> " + itemNameError);
             console.log(quantity.value + " -> " + quantity.error + " -> " + quantityError);
             console.log(unitPrice.value + " -> " + unitPrice.error + " -> " + unitPriceError);
-            //console.log(totalPrice.value + " -> " + totalPrice.error);
             console.log(size.value + " -> " + size.error + " -> " + sizeError);
+            console.log(siteName.value + " -> " + siteName.error + " -> " + siteNameError);
             const order = {
+                site: siteName.value,
                 siteManagerID: "U0001",
                 siteManagerName: "Silva",
                 items: {
@@ -77,7 +80,7 @@ export const NewOrder = ({ navigation }) => {
                     size: size.value,
                     quantity: quantity.value,
                     unitPrice: unitPrice.value,
-                    orderStatus: "Pending",
+                    orderStatus: "Waiting for a supplier",
                     receivedAmount: 0,
                     updatedDate: new Date().toString()
                 },
@@ -111,6 +114,18 @@ export const NewOrder = ({ navigation }) => {
         <ScrollView>
             <Background>
                 <Logo />
+                <TextInput
+                    label="Site Name"
+                    returnKeyType="next"
+                    value={siteName.value}
+                    onChangeText={(text) => setSiteName({ value: text, error: '' })}
+                    error={!!siteName.error}
+                    errorText={siteName.error}
+                    autoCapitalize="none"
+                    autoCompleteType="text"
+                    textContentType="text"
+                    keyboardType="text"
+                />
                 <TextInput
                     label="Item Name"
                     returnKeyType="next"
