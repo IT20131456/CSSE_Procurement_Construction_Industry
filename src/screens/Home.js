@@ -1,3 +1,7 @@
+/**
+ * This is Home screnn of the application
+ * Create order and view orders are main navigation of the Home screen
+ */
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Text, View, Button, ScrollView } from 'react-native';
@@ -39,4 +43,5 @@ export default function Home({ navigation }) {
       </Background>
     </ScrollView>
   )
+
 }
