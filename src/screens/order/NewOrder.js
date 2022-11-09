@@ -179,6 +179,7 @@ export const NewOrder = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={styles.button}
+                    testID='addOrderButton'
                     onPress={() => { onOrderPressed() }}
                 >
                     <Text style={styles.text}>Add Order</Text>
