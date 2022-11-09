@@ -10,7 +10,7 @@ import Logo from '../../components/auth/Logo';
 import TextInput from '../../components/auth/TextInput';
 import SubmitButton from '../../components/auth/SubmitButton';
 
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Button} from 'react-native';
 
 export default function Login() {
   const Navigation = useNavigation();
@@ -64,6 +64,8 @@ export default function Login() {
       <SubmitButton mode="contained" color="#f08e25" onPress={onLoginPressed}>
         Login
       </SubmitButton>
+
+      <Button title="Submit" mode="contained" onPress={onLoginPressed} testID="loginButton" />
 
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
