@@ -15,6 +15,7 @@ import LoginScreen from '../screens/auth/Login';
 import ViewOrders from '../screens/order/ViewOrders';
 import {NewOrder} from '../screens/order/NewOrder';
 import ViewOrderDetails from '../screens/order/ViewOrderDetails';
+import RegisterScreen from '../screens/auth/Register';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,11 @@ export default function Navigation() {
           options={{headerShown: false}}
           name="Login"
           component={LoginScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Register"
+          component={RegisterScreen}
         />
         <Stack.Screen name="NewOrder" component={NewOrder} />
         <Stack.Screen name="ViewOrders" component={ViewOrders} />

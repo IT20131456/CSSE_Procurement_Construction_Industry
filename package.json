@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
+    "@testing-library/react-native": "^11.0.0",
     "axios": "^0.27.2",
     "react": "18.1.0",
     "react-native": "0.70.4",
@@ -30,6 +31,9 @@
     "react-test-renderer": "18.1.0"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "testPathIgnorePatterns": [
+      "node_modules/(?!@react-native|react-native)"
+    ]
   }
 }
