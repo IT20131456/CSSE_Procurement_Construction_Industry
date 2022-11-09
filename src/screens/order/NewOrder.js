@@ -4,11 +4,14 @@ import Background from '../../components/auth/Background';
 import TextInput from '../../components/auth/TextInput';
 import axios from 'axios';
 import Logo from '../../components/auth/Logo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const NewOrder = ({ navigation }) => {
 
     // todo: change this later to drop down with retrieved data from database
     const maxBudget = 100000;
+    const [siteManagerID, setSiteManagerID] = React.useState('');
+    const [siteManagerName, setSiteManagerName] = React.useState('');
     const [siteName, setSiteName] = React.useState({ value: '', error: '' });
     const [itemName, setItemName] = React.useState({ value: '', error: '' });
     const [quantity, setQuantity] = React.useState({ value: 0.0, error: '' });
@@ -18,7 +21,9 @@ export const NewOrder = ({ navigation }) => {
     const [storedItemList, setStoredItemList] = React.useState([]);
 
     useEffect(() => {
-        axios.get('http://192.168.1.102:5000/itemDetails/getall').then((response) => {
+
+        handleUserToken();
+        axios.get('http://192.168.1.103:5000/itemDetails/getall').then((response) => {
             //console.log(response.data);
             if (response.data.success) {
                 setStoredItemList(response.data.existingItemDetails);
@@ -26,15 +31,19 @@ export const NewOrder = ({ navigation }) => {
         });
     }, []);
 
-    const onOrderPressed = () => {
-        let siteNameError = true;
-        let itemNameError = true;
-        let sizeError = true;
-        let quantityError = true;
-        let unitPriceError = true;
-        //let totalPriceError = true;
+    const handleUserToken = async () => {
+        const userData = await AsyncStorage.getItem('loggedUserData');
+        const userDataArray = JSON.parse(userData);
+        setSiteManagerID(userDataArray.userID);
+        setSiteManagerName(userDataArray.userName);
+      }
 
-        if (itemName.value === '') {
+    const onOrderPressed = () => {
+
+        if (siteName.value === '') {
+            setSiteName({ ...siteName, error: 'Site name cannot be empty' });
+        }
+        else if (itemName.value === '') {
             setItemName({ ...itemName, error: 'Item name cannot be empty' });
         }
         else if (quantity.value === '') {
@@ -49,18 +58,16 @@ export const NewOrder = ({ navigation }) => {
         else if (size.value === '') {
             setSize({ ...size, error: 'Size cannot be empty' });
         }
-        else if (siteName.value === '') {
-            setSiteName({ ...siteName, error: 'Site name cannot be empty' });
-        }
         else {
-            itemNameError = false;
-            quantityError = false;
-            unitPriceError = false;
-            sizeError = false;
-            siteNameError = false;
+            itemName.error = '';
+            quantity.error = '';
+            unitPrice.error = '';
+            //totalPrice.error = '';
+            size.error = '';
+            siteName.error = '';
         }
 
-        if (itemNameError || quantityError || unitPriceError || sizeError || siteNameError) {
+        if (itemName.value==='' || quantity.value==='' || unitPrice.value==='' || size.value==='' || siteName.value==='') {
             Alert.alert('Error', 'Please check the fields again', [
                 { text: 'OK', onPress: () => console.log('OK Pressed') },
             ]);
@@ -76,8 +83,8 @@ export const NewOrder = ({ navigation }) => {
             }
             const order = {
                 site: siteName.value,
-                siteManagerID: "U0001",
-                siteManagerName: "Silva",
+                siteManagerID: siteManagerID,
+                siteManagerName: siteManagerName,
                 items: {
                     name: itemName.value,
                     size: size.value,
@@ -94,20 +101,21 @@ export const NewOrder = ({ navigation }) => {
                 createdDate: new Date().toString(),
             }
             //console.log(order);
-            axios.post('http://192.168.1.102:5000/tender/add', order)
+            axios.post('http://192.168.1.103:5000/tender/add', order)
                 .then((response) => {
-                    console.log(response);
                     if (response.data.success) {
                         alert("Successfully added the order");
                         setTimeout(() => {
                             navigation.navigate('Home');
-                        }, 2000)
-
+                        }, 20)
+                    }
+                    else {
+                        alert("Error while adding the order, Please try again");
                     }
                 })
                 .catch(function (error) {
                     console.log(error);
-                    alert("Creating record failed");
+                    //alert("Creating record failed");
                 });
         }
     }
