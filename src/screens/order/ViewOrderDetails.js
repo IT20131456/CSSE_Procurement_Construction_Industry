@@ -94,22 +94,15 @@ export default function ViewOrderDetails() {
         </View>
       </View>
 
-      <Button
-        style={styles.receivedBtn}
-        onPress={onPressReceived}
-        title="Recevied"
-        color="#008080"
-      />
+      <TouchableOpacity style={styles.receivedBtn} onPress={onPressReceived}>
+            <Text style={styles.mainBtnTitle}>Recevied</Text>
+      </TouchableOpacity>
 
-      <Text></Text>
-      <Button
-        style={styles.receivedBtn}
-        onPress={() => {
+      <TouchableOpacity style={styles.notReceivedBtn} onPress={() => {
           setNotReceived(false);
-        }}
-        title="Not Recevied"
-        color="#ff6347"
-      />
+        }}>
+            <Text style={styles.mainBtnTitle}>Not Recevied</Text>
+      </TouchableOpacity>
 
       <Text></Text>
 
@@ -117,7 +110,7 @@ export default function ViewOrderDetails() {
         <View></View>
       ) : (
         <View>
-          <TextInput label="Reason" value={reason} onChangeText={setReason} />
+          <TextInput label="Reason" value={reason} onChangeText={setReason} style={{ width: 250,  }}/>
           <Button
             style={styles.receivedBtn}
             onPress={onPressNotReceived}
@@ -150,7 +143,27 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
+
   receivedBtn: {
-    marginTop: 20,
+    width: '50%',
+    backgroundColor: '#008080',
+    height: 50,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20
   },
+  mainBtnTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
+  notReceivedBtn: {
+    width: '50%',
+    backgroundColor: '#ff6347',
+    height: 50,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20
+  }
 });

@@ -41,7 +41,8 @@ export default function ViewOrders() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <View style={styles.container}>
       <Text style={styles.pageTitle}>Order List</Text>
 
       {order.map((order, index) => {
@@ -66,6 +67,8 @@ export default function ViewOrders() {
         );
       })}
     </View>
+    </ScrollView>
+    
   );
 }
 
