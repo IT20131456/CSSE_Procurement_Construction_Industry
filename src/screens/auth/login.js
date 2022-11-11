@@ -93,8 +93,6 @@ export default function Login() {
         Login
       </SubmitButton>
 
-      <Button title="Submit" mode="contained" onPress={onLoginPressed} testID="loginButton" />
-
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>

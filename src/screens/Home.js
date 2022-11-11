@@ -92,7 +92,7 @@ export default function Home({ navigation }) {
       <Text>User ID - {userToken.userID}</Text>
       <Text>User Name - {userToken.userName}</Text>
 
-      <Button title="Logout" onPress={handleLogout}/> */}
+       */}
 
       
 
@@ -120,6 +120,7 @@ export default function Home({ navigation }) {
           />
         </View>
       </Background> */}
+      <Button title="Logout" onPress={handleLogout}/>
     </ScrollView>
   )
 
