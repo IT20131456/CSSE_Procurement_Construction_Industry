@@ -3,16 +3,15 @@
  */
 import {React, useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
+
+import {orderGetAll} from '../../api/OrderApi';
 
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  Button,
   ScrollView,
-  SectionList,
 } from 'react-native';
 
 export default function ViewOrders() {
@@ -22,50 +21,60 @@ export default function ViewOrders() {
   const [recieveStatus, setRecieveStatus] = useState('Not Recived');
 
   useEffect(() => {
-    //Call GET method to retive order list from database and set to order array
-    axios
-      .get('http://192.168.56.1:5000/tender/getall')
-      .then(function (response) {
-        if (response.data.success) {
-          setOrder(response.data.existingTenders);
-        }
-      })
-      .catch(function (error) {
-        alert('Error');
-      });
+    retriveOrders();
   }, []);
 
+  const retriveOrders = () => {
+    orderGetAll()
+      .then(result => {
+        setOrder(result.data.existingTenders);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   //When user press a particular order that redirect to more details screnn of the particular order
-  const onPressOrder = () => {
-    Navigation.navigate('ViewOrderDetails');
+  const onPressOrder = order_id => {
+    const data = {
+      orderId: order_id,
+    };
+
+    Navigation.navigate('ViewOrderDetails', data);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.pageTitle}>Order List</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.pageTitle}>Order List</Text>
 
-      {order.map((order, index) => {
-        return (
-          <TouchableOpacity style={styles.itemBox} onPress={onPressOrder}>
-            <View style={styles.orderListSection}>
-              <View style={styles.orderTitle}>
-                <Text style={styles.sectionHeader}>
-                  {' '}
-                  #O00{index + 1} - DMS Pvt Ltd{' '}
-                </Text>
+        {order.map((order, index) => {
+          return (
+            <TouchableOpacity
+              style={styles.itemBox}
+              onPress={() => {
+                onPressOrder(order._id);
+              }}>
+              <View style={styles.orderListSection}>
+                <View style={styles.orderTitle}>
+                  <Text style={styles.sectionHeader}>
+                    {' '}
+                    #O00{index + 1} - {order.site}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.orderDetails}>
-              Order Date - {order.createdDate}
-            </Text>
+              <Text style={styles.orderDetails}>
+                Order Date - {order.createdDate}
+              </Text>
 
-            <View style={styles.statusSection}>
-              <Text style={styles.statusText}>{recieveStatus}</Text>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
+              <View style={styles.statusSection}>
+                <Text style={styles.statusText}>{recieveStatus}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </ScrollView>
   );
 }
 

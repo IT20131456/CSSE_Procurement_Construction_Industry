@@ -2,9 +2,9 @@
  * This compoenets used to display details about the order
  */
 import {React, useState, useEffect} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 import TextInput from '../../components/auth/TextInput';
+
+import {orderGetById, receviedOrderSave} from '../../api/OrderApi';
 
 import {
   StyleSheet,
@@ -12,71 +12,63 @@ import {
   View,
   TouchableOpacity,
   Button,
-  ScrollView,
-  SectionList,
 } from 'react-native';
 
-export default function ViewOrderDetails() {
+export default function ViewOrderDetails({route}) {
+  const orderId = route.params.orderId;
+
   const [order, setOrder] = useState([]);
   const [notReceived, setNotReceived] = useState(true);
   const [reason, setReason] = useState('');
 
   useEffect(() => {
-    var sampleID = '636139517cb2b5e5299ef7c3';
-
-    //Call GET methos to retice the order details
-    axios
-      .get(`http://192.168.56.1:5000/tender/get/636139517cb2b5e5299ef7c3`)
-      .then(function (response) {
-        if (response.data.success) {
-          setOrder(response.data.existingTender);
-        }
-      })
-      .catch(function (error) {
-        alert('Error');
-      });
+    retriveOrderById();
   }, []);
+
+  const retriveOrderById = () => {
+    orderGetById({orderId: orderId})
+      .then(result => {
+        setOrder(result.data.existingTender);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   //If press recvied button that response send to the datbase
   const onPressReceived = () => {
-    const data = {
+    receviedOrderSave({
       orderID: order._id,
-    };
-    axios
-      .post(`http://192.168.56.1:5000/receivedOrder/add`, data)
-      .then(function (response) {
-        if (response.data.success) {
-          alert('Saved Sucessfull');
-        }
+    })
+      .then(result => {
+        alert('Saved Sucessfull');
       })
-      .catch(function (error) {
-        alert('Error');
+      .catch(error => {
+        console.log(error);
       });
   };
 
   //Id press nor received buttton that reponse send to the database
   const onPressNotReceived = () => {
-    const data = {
+    receviedOrderSave({
       orderID: order._id,
       reason: reason,
-    };
-    axios
-      .post(`http://192.168.56.1:5000/receivedOrder/add`, data)
-      .then(function (response) {
-        if (response.data.success) {
-          alert('Saved Sucessfull');
-        }
+    })
+      .then(result => {
+        alert('Send Successfull');
       })
-      .catch(function (error) {
-        alert('Error');
+      .catch(error => {
+        console.log(error);
       });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>#O001 - DMS Pvt Ltd</Text>
+      <Text style={styles.pageTitle}>#O001 - {order.site}</Text>
 
       <Text>Order Date - {order.createdDate}</Text>
+
+      <Text>{orderId}</Text>
 
       <View style={styles.orderItemContainer}>
         <View>
@@ -94,22 +86,17 @@ export default function ViewOrderDetails() {
         </View>
       </View>
 
-      <Button
-        style={styles.receivedBtn}
-        onPress={onPressReceived}
-        title="Recevied"
-        color="#008080"
-      />
+      <TouchableOpacity style={styles.receivedBtn} onPress={onPressReceived}>
+        <Text style={styles.mainBtnTitle}>Recevied</Text>
+      </TouchableOpacity>
 
-      <Text></Text>
-      <Button
-        style={styles.receivedBtn}
+      <TouchableOpacity
+        style={styles.notReceivedBtn}
         onPress={() => {
           setNotReceived(false);
-        }}
-        title="Not Recevied"
-        color="#ff6347"
-      />
+        }}>
+        <Text style={styles.mainBtnTitle}>Not Recevied</Text>
+      </TouchableOpacity>
 
       <Text></Text>
 
@@ -117,7 +104,12 @@ export default function ViewOrderDetails() {
         <View></View>
       ) : (
         <View>
-          <TextInput label="Reason" value={reason} onChangeText={setReason} />
+          <TextInput
+            label="Reason"
+            value={reason}
+            onChangeText={setReason}
+            style={{width: 250}}
+          />
           <Button
             style={styles.receivedBtn}
             onPress={onPressNotReceived}
@@ -150,7 +142,27 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
+
   receivedBtn: {
-    marginTop: 20,
+    width: '50%',
+    backgroundColor: '#008080',
+    height: 50,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  mainBtnTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
+  notReceivedBtn: {
+    width: '50%',
+    backgroundColor: '#ff6347',
+    height: 50,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
   },
 });
